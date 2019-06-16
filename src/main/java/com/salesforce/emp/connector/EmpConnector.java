@@ -23,6 +23,7 @@ import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,8 +121,15 @@ public class EmpConnector {
 
     public EmpConnector(BayeuxParameters parameters) {
         this.parameters = parameters;
-        httpClient = new HttpClient(parameters.sslContextFactory());
+        SslContextFactory ctxFactory = parameters.sslContextFactory();
+        httpClient = new HttpClient(ctxFactory);
         httpClient.getProxyConfiguration().getProxies().addAll(parameters.proxies());
+    }
+    public EmpConnector(BayeuxParameters parameters, HttpClient httpClient) {
+        this.parameters = parameters;
+        this.httpClient = httpClient;
+
+        this.httpClient.getProxyConfiguration().getProxies().addAll(parameters.proxies());
     }
 
     /**
